@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="authMenuMap">
+
+    <resultMap id="authMenuMapMap" class="syst.auth.vo.AuthorityMenuMapMGVO">
+        <result property="groupNo" column="GROUP_NO"/>
+        <result property="menuNo" column="MENU_NO"/>
+        <result property="regEmpId" column="REG_EMP_ID"/>
+        <result property="regDt" column="REG_DT"/>
+    </resultMap>
+    
+    <select id="getMenuIdsForGroup" resultClass="java.lang.Long">
+        SELECT MENU_NO
+        FROM NTP1_AUTH_MENU_MAP_MG
+        WHERE GROUP_NO = #groupNo#
+    </select>
+    
+    
+    <delete id="clearMenusFromAuthorityGroup" parameterClass="java.lang.Long">
+        DELETE FROM NTP1_AUTH_MENU_MAP_MG
+        WHERE GROUP_NO = #groupNo#
+    </delete>
+
+    <insert id="addMenuToAuthorityGroup" parameterClass="syst.auth.vo.AuthorityMenuMapMGVO">
+        INSERT INTO NTP1_AUTH_MENU_MAP_MG (GROUP_NO, MENU_NO, REG_EMP_ID, REG_DT)
+        VALUES (#groupNo#, #menuNo#, #regEmpId#, #regDt#)
+    </insert>
+    
+    <insert id="createAuthorityGroupMenu" parameterClass="java.util.Map">
+   		 INSERT INTO NTP1_AUTH_MENU_MAP_MG (GROUP_NO, MENU_NO, REG_EMP_ID, REG_DT)
+        VALUES (#groupNo#, #menuNo#, #regEmpId#, #regDt#)
+	</insert>
+
+
+</sqlMap>

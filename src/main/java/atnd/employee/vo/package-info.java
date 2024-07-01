@@ -1,0 +1,1 @@
+package atnd.employee.vo;

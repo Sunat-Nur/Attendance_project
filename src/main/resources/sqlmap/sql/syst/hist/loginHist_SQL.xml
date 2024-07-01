@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="loginHist">
+
+    <resultMap id="loginHistoryResultMap" class="syst.hist.vo.LoginHistoryVO">
+        <result property="no" column="NO"/>
+        <result property="histDate" column="HIST_DATE"/>
+        <result property="ip" column="IP"/>
+        <result property="empId" column="EMP_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="deptName" column="DEPT_NAME"/>
+    </resultMap>
+   
+    <insert id="insertLoginHistory" parameterClass="syst.hist.vo.LoginHistoryVO">
+	   INSERT INTO NTP1_LOGIN_HIST_MG (NO, HIST_DATE, IP, EMP_ID, NAME, DEPT_NAME)
+	   VALUES 
+	   ((SELECT COALESCE(MAX(NO), 0) + 1 FROM NTP1_LOGIN_HIST_MG),
+	    #histDate#, 
+	    #ip#, #empId#,
+	    #name#,
+	    #deptName#)
+	</insert>
+   
+    <select id="getAllLoginHistories" resultMap="loginHistoryResultMap">
+        SELECT * FROM NTP1_LOGIN_HIST_MG
+    </select>
+    
+   	<select id="findLastLoginForUser" parameterClass="java.lang.String" resultMap="loginHistoryResultMap">
+        SELECT * FROM NTP1_LOGIN_HIST_MG
+        WHERE EMP_ID = #value#
+        AND HIST_DATE = (SELECT MAX(HIST_DATE) FROM NTP1_LOGIN_HIST_MG WHERE EMP_ID = #value#)
+    </select>
+
+</sqlMap>

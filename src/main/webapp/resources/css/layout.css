@@ -1,0 +1,307 @@
+@charset "utf-8";
+
+/* common layout */
+
+/* header styles */
+/* Base styles (mobile-first approach) */
+.header {background-color: #ffffff; padding: 10px 20px; text-align: center; border-bottom: 2px solid #c0c0c0; display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; }
+.header .logo { display: flex; align-items: center; }
+.header .logo img {height: 25px; }
+.header .user-info img { height: 15px; }
+.header .user-logout-group { display: flex; align-items: center; justify-content: space-between; }
+.header .user-info, .header .logout { display: flex;  align-items: center;  margin-left: 20px; }
+.header .user-info .username { margin-left: 5px; font-size: 13px; }
+.header .user-info .last-access { margin-left: 10px; font-size: 10px; }
+.header .logout img {height: 20px; }
+.header .logout a { display: flex; align-items: center; text-decoration: none; }
+.header .logout span { display: none; color: #096cdb;  font-size: 12px; line-height: 1; vertical-align: middle; margin-left: 5px; }
+/* Medium screens (tablets, small desktops) */
+@media (min-width: 600px) {
+	.header .logo img {height: 30px; }
+	.header .logout img { height: 25px; }
+	.header .user-info img  { height: 17px; }
+	.header .user-info .username, .header .user-info .last-access { display: inline; }
+	.header .logout span { display: inline; font-size: 15px; }}
+/* Larger screens (desktops) */
+@media (min-width: 1024px) {
+	.header {padding: 10px 25px; }
+	.header .logo img {height: 45px; }
+	.header .logout img { height: 45px; }
+	.header .user-info img { height: 25px; }
+	.header .logout span {font-size: 20px;}
+	.header .user-info .username { margin-left: 5px; font-size: 15px; }
+	.header .user-info .last-access { margin-left: 10px; font-size: 12px; }}
+	
+	
+/* Subheader styles */
+.subheader {
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    border-bottom: 2px solid #d7d7d7;
+    cursor: default;
+   	display: flex; 
+    justify-content: flex-start;
+}
+
+.subheader nav {
+    width: 100%; /* Full width */
+}
+
+.subheader nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; 
+    flex-wrap: nowrap; 
+    overflow-x: auto; 
+}
+
+.subheader nav ul li {
+	flex-shrink: 0; 
+    white-space: nowrap; 
+    margin-right: 100px; 
+}
+
+.subheader nav ul li:hover {
+	color: #0056b3; /* Change color on hover */
+    cursor: pointer; /* Change cursor to pointer */
+}
+
+.subheader nav ul li:first-child {
+    margin-left: 42px; 
+}
+
+.subheader nav ul li:last-child {
+    margin-right: 0; 
+}
+
+.subheader nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    padding: 0 50px; 
+    transition: color 0.3s;
+}
+
+.subheader nav ul li a:hover {
+    color: #0056b3; /* Change color on hover */
+}
+
+.subheader a.active {
+    color: #096cdb; /* Active menu item color */
+}
+
+.subheader .menu-item.active, .subheader .submenu-item.active {
+    color: #0056b3;
+}
+
+/* Responsive design for subheader */
+@media (max-width: 600px) {
+    .subheader nav ul {
+     	flex-direction: row; /* Change to row for horizontal layout */
+        align-items: center; /* Center items vertically within each list item */
+        justify-content: space-around; /* Distribute items evenly with space around them */
+    }
+
+    .subheader nav ul li {
+        margin: 0;
+    }
+    
+  	.subheader nav ul li a {
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .subheader nav ul li a {
+        font-size: 18px;
+    }
+}
+
+
+#submenuContainer {
+    background-color: #f9f9f9;
+    border: 1px solid #c0c0c0;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000; /* Increased z-index value */
+    display: none; /* Initially hidden, shown on main menu item hover */
+    position: absolute; /* Positioned based on clicked main menu item */
+    min-width: 150px;
+    margin-top: 10px;
+}
+
+#submenuContainer ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+#submenuContainer li {
+    padding: 8px 30px;
+    cursor: pointer;
+}
+
+#submenuContainer li:hover {
+    background-color: #e0e0e0;
+}
+
+.submenu-item ul {
+    display: none; /* Ensure nested submenus are hidden initially */
+}
+
+
+
+
+/* Arrow Styling */
+.submenu-arrow {
+    float: right; /* Position the arrow to the right of the menu item */
+    cursor: pointer;
+}
+
+/* Enhance visibility for nested submenus */
+.nested-submenu {
+    display: none; /* Ensure nested submenus are initially hidden */
+}
+
+.has-submenu:hover .submenu-arrow {
+    transform: rotate(90deg); /* Optional: Rotate arrow on hover */
+}
+
+/* Style adjustments for submenu items */
+#submenuContainer li.has-submenu > span.submenu-arrow {
+    margin-left: 5px; /* Space between menu text and arrow */
+}
+
+
+
+/* Breadcrumb styles */
+.breadcrumb {
+    display: flex; /* Use flexbox for the breadcrumb container */
+    align-items: center; /* Vertically center the items in the breadcrumb */
+    justify-content: flex-end; /* Align items to the right side */
+    background-color: #eefafd;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.breadcrumb-item {
+    display: flex; /* Also use flexbox for each breadcrumb item */
+    align-items: center; /* Vertically center the content and icon within each item */
+    font-size: 13px;
+}
+
+.breadcrumb-item:last-child {
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: '>';
+    margin-left: 7px;
+    margin-right: 7px;
+    color: #999;
+    font-size: 14px; /* Adjust the size as needed */
+}
+
+.breadcrumb-item.active {
+    color: #007bff;
+}
+
+
+/* Sidebar basic styles */
+#sidebar {
+    background-color: #343a40; /* Dark background color */
+    color: #ffffff; /* Light text color for contrast */
+    width: 260px; /* Maximum width to maintain consistency */
+    height: 78vh; /* Full-height */
+    overflow-y: auto; /* Enable scroll if content overflows */
+    position: fixed; /* Fixed position to stay visible during scrolling */
+    transition: all 0.3s; /* Smooth transition for collapsing */
+}
+
+#sidebar ul, #sidebar li {
+    list-style-type: none; /* Removes default list styling */
+    padding: 5px 25px;
+    margin: 0;
+}
+
+
+/* Main Menu Title Styles */
+#sidebar .main-menu-title {
+    font-size: 17px; /* Larger font size for titles */
+    text-align: center;
+    padding: 10px 15px; /* Greater padding for visual separation */
+    color: #ffffff; /* Text color */
+    background-color: #2284EC; /* Optional: background color for titles */
+    margin-bottom: 5px; /* Space below the title */
+    border-bottom: 2px solid rgba(255,255,255,0.2); /* Subtle bottom border */
+}
+
+/* Menu item styles */
+#sidebar .menu-item, #sidebar .submenu-item {
+    padding: 10px 10px; /* Padding for spacing */
+    display: block; /* Ensure items take full width */
+    text-decoration: none; /* Remove underline from links */
+    color: #ffffff; /* Text color */
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Subtle separators */
+    font-size: 14px;
+}
+
+
+/* Hover effects */
+#sidebar .menu-item:hover, #sidebar .submenu-item:hover {
+    background-color: rgba(255,255,255,0.1); /* Light background on hover for contrast */
+    text-decoration: none; /* Ensure no underline on hover */
+    cursor: pointer;
+}
+
+/* Active menu item */
+#sidebar .active {
+    color: #007bff; /* Text color for active item */
+    font-weight: bold; /* Make active item text bold */
+}
+
+/* Submenu list style */
+#sidebar .submenu {
+    padding-left: 20px; /* Indent submenu for hierarchy visualization */
+}
+
+/* Toggle button style */
+#sidebar .toggle {
+    position: absolute; /* Absolute positioning relative to parent */
+    right: 15px; /* Consistent distance from the right */
+    cursor: pointer; /* Change cursor on hover */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        min-width: 0;
+        max-width: 0;
+        overflow-y: hidden; /* Hide content when sidebar is collapsed */
+        transition: all 0.3s; /* Smooth transition for collapsing */
+    }
+    body {
+        padding-left: 0; /* Remove body padding on small devices */
+    }
+}
+
+
+
+/* Pagecontent styles */
+#pageContent {
+	margin-left: 17%; /* Adjust this value to match the width of your sidebar */
+    width: calc(100% - 17%); /* Subtract the sidebar width from 100% */
+    height: 78vh;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    padding: 20px; /* Optional padding for inner content */
+    overflow-y: auto; /* Add vertical scroll if the content exceeds the viewport height */
+    right: 5px;
+    position: relative;
+    background-color: #ffffff; /* Optional background color */
+    border: 1px solid black;
+    font-size: 14px;
+}

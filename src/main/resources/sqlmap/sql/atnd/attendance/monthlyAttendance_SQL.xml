@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="monthlyAttendance">
+
+<resultMap id="monthlyAttendanceResultMapAvgStartTime" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />  
+    <result column="AVG_START_TIME" property="avgStartTime" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapAvgEndTime" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />  
+    <result column="AVG_END_TIME" property="avgEndTime" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalWorkHour" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />  
+    <result column="TTL_WORK_HOUR" property="ttlWorkHour" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalLate" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_LATE" property="ttlLate" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalLateness" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_LATENESS" property="ttlLateness" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalOutsideWork" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_OUTSIDE_WORK" property="ttlOutsideWork" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalBusinessTrip" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_BUSINESS_TRIP" property="ttlBusinessTrip" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalTraining" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_TRAINING" property="ttlTraining" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalOverTime" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_OVER_TIME" property="ttlOverTime" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapAvgStatus" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="AVG_STATUS" property="avgStatus" />
+</resultMap>
+
+<resultMap id="monthlyAttendanceResultMapTotalAew" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result column="EMP_ID" property="empId" />
+    <result column="TTL_AEW" property="ttlAew" />
+</resultMap>
+
+
+<resultMap id="generateMonthlyAttendanceAggregateResultMap" class="atnd.attendance.vo.AttendanceAggregateVO">
+    <result property="empId" column="EMP_ID"/>
+    <result property="year" column="YEAR"/>
+    <result property="month" column="MONTH"/>
+    <result property="avgStartTime" column="avg_start_time" />
+    <result property="avgEndTime" column="avg_end_time" />
+    <result property="avgStatus" column="avg_status" />
+    <result property="ttlLate" column="total_late" />
+    <result property="ttlLateness" column="total_lateness" />
+    <result property="ttlOutsideWork" column="total_outside_work" />
+    <result property="ttlBusinessTrip" column="total_business_trip" />
+    <result property="ttlTraining" column="total_training" />
+    <result property="ttlOverTime" column="total_overtime" />
+    <result property="ttlWorkHour" column="total_workhour" />
+    <result property="ttlAew" column="total_aew" />
+</resultMap>
+
+
+<insert id="insertMonthlyAttendance" parameterClass="atnd.attendance.vo.AttendanceAggregateVO">
+        INSERT INTO NTP1_MONTHLY_ATND_MG (
+        	mnt_atnd_no,
+            emp_id,
+            year,
+            month,
+            avg_start_time,
+            avg_end_time,
+            ttl_work_hour,
+            ttl_lateness,
+            ttl_late,
+            ttl_over_time,
+            ttl_outside_work,
+            ttl_business_trip,
+            ttl_training,
+            ttl_aew,
+            avg_status
+        ) VALUES (
+           (SELECT COALESCE(MAX(MNT_ATND_NO), 0) + 1 FROM NTP1_MONTHLY_ATND_MG),
+            #empId#,
+            #year#,
+            #month#,
+            #avgStartTime#,
+            #avgEndTime#,
+            #ttlWorkHour#,
+            #ttlLateness#,
+            #ttlLate#,
+            #ttlOverTime#,
+            #ttlOutsideWork#,
+            #ttlBusinessTrip#,
+            #ttlTraining#,
+            #ttlAew#,
+            #avgStatus#
+        )
+    </insert>
+
+<select id="generateMonthlyAttendance" resultMap="generateMonthlyAttendanceAggregateResultMap">
+<![CDATA[
+WITH MonthRange AS (
+    SELECT
+        ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -1) AS start_date,
+        LAST_DAY(ADD_MONTHS(SYSDATE, -1)) AS end_date
+    FROM dual
+),
+DailyData AS (
+    SELECT
+        a.EMP_ID,
+        EXTRACT(YEAR FROM a.TIME_SETTING) AS YEAR,
+        TO_CHAR(a.TIME_SETTING, 'MM') AS MONTH,
+        (TO_NUMBER(TO_CHAR(a.START_TIME, 'HH24')) * 60 + TO_NUMBER(TO_CHAR(a.START_TIME, 'MI'))) AS START_TIME_MINUTES,
+        (TO_NUMBER(TO_CHAR(a.END_TIME, 'HH24')) * 60 + TO_NUMBER(TO_CHAR(a.END_TIME, 'MI'))) AS END_TIME_MINUTES,
+        a.STATUS,
+        CASE WHEN a.LATE > 0 THEN 1 ELSE 0 END AS IS_LATE,
+        a.LATENESS,
+        a.OUTSIDE_WORK,
+        a.BUSINESS_TRIP,
+        a.TRAINING,
+        a.OVER_TIME,
+        a.WORK_HOUR,
+        a.AEW
+    FROM
+        NTP1_DAILY_ATND_MG a
+    WHERE
+        a.TIME_SETTING BETWEEN (SELECT start_date FROM MonthRange) AND (SELECT end_date FROM MonthRange)
+),
+AggregatedData AS (
+    SELECT
+        EMP_ID,
+        YEAR,
+        MONTH,
+        AVG(START_TIME_MINUTES) AS AVG_START_TIME_MINUTES,
+        AVG(END_TIME_MINUTES) AS AVG_END_TIME_MINUTES,
+        ROUND(AVG(STATUS), 2) AS AVG_STATUS,
+        SUM(IS_LATE) AS TOTAL_LATE,
+        SUM(LATENESS) AS TOTAL_LATENESS,
+        SUM(OUTSIDE_WORK) AS TOTAL_OUTSIDE_WORK,
+        SUM(BUSINESS_TRIP) AS TOTAL_BUSINESS_TRIP,
+        SUM(TRAINING) AS TOTAL_TRAINING,
+        SUM(OVER_TIME) AS TOTAL_OVERTIME,
+        SUM(WORK_HOUR) AS TOTAL_WORKHOUR,
+        SUM(AEW) AS TOTAL_AEW
+    FROM
+        DailyData
+    GROUP BY EMP_ID, YEAR, MONTH
+)
+SELECT
+    EMP_ID,
+    YEAR,
+    MONTH,
+    TO_CHAR(FLOOR(AVG_START_TIME_MINUTES / 60), 'FM00') || ':' || TO_CHAR(MOD(AVG_START_TIME_MINUTES, 60), 'FM00') AS AVG_START_TIME,
+    TO_CHAR(FLOOR(AVG_END_TIME_MINUTES / 60), 'FM00') || ':' || TO_CHAR(MOD(AVG_END_TIME_MINUTES, 60), 'FM00') AS AVG_END_TIME,
+    AVG_STATUS,
+    TOTAL_LATE,
+    TOTAL_LATENESS,
+    TOTAL_OUTSIDE_WORK,
+    TOTAL_BUSINESS_TRIP,
+    TOTAL_TRAINING,
+    TOTAL_OVERTIME,
+    TOTAL_WORKHOUR,
+    TOTAL_AEW
+FROM
+    AggregatedData
+]]>
+</select>
+
+
+
+<insert id="insertMonthlyAverageAttendance" parameterClass="atnd.attendance.vo.AttendanceAggregateVO">
+INSERT INTO NTP1_MONTHLY_ATND_MG (
+    EMP_ID, MNT_ATND_NO, YEAR, MONTH, AVG_START_TIME, AVG_END_TIME,
+    TTL_WORK_HOUR, TTL_LATENESS, TTL_LATE, TTL_OVER_TIME, TTL_OUTSIDE_WORK,
+    TTL_BUSINESS_TRIP, TTL_TRAINING, TTL_AEW, AVG_STATUS
+) VALUES (
+    #empId#,
+    (SELECT COALESCE(MAX(MNT_ATND_NO), 0) + 1 FROM NTP1_MONTHLY_ATND_MG),
+    #year#,
+    #month#,
+    #avgStartTime#,
+    #avgEndTime#,
+    #ttlWorkHour#,
+    #ttlLateness#,
+    #ttlLate#,
+    #ttlOverTime#,
+    #ttlOutsideWork#,
+    #ttlBusinessTrip#,
+    #ttlTraining#,
+    #ttlAew#,
+    #avgStatus#
+)
+</insert>
+
+
+
+<select id="getLatestDataByColumn_AVG_START_TIME" resultMap="monthlyAttendanceResultMapAvgStartTime">
+    SELECT a.EMP_ID, a.AVG_START_TIME
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.AVG_START_TIME IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_AVG_END_TIME" resultMap="monthlyAttendanceResultMapAvgEndTime">
+    SELECT a.EMP_ID, a.AVG_END_TIME
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.AVG_END_TIME IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_WORK_HOUR" resultMap="monthlyAttendanceResultMapTotalWorkHour">
+    SELECT a.EMP_ID, a.TTL_WORK_HOUR
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_WORK_HOUR IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_LATE" resultMap="monthlyAttendanceResultMapTotalLate">
+    SELECT a.EMP_ID, a.TTL_LATE
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_LATE IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_LATENESS" resultMap="monthlyAttendanceResultMapTotalLateness">
+    SELECT a.EMP_ID, a.TTL_LATENESS
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_LATENESS IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_OUTSIDE_WORK" resultMap="monthlyAttendanceResultMapTotalOutsideWork">
+    SELECT a.EMP_ID, a.TTL_OUTSIDE_WORK
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_OUTSIDE_WORK IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_BUSINESS_TRIP" resultMap="monthlyAttendanceResultMapTotalBusinessTrip">
+    SELECT a.EMP_ID, a.TTL_BUSINESS_TRIP
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_BUSINESS_TRIP IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_TRAINING" resultMap="monthlyAttendanceResultMapTotalTraining">
+    SELECT a.EMP_ID, a.TTL_TRAINING
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_TRAINING IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_OVERTIME" resultMap="monthlyAttendanceResultMapTotalOverTime">
+    SELECT a.EMP_ID, a.TTL_OVER_TIME
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_OVER_TIME IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_AVG_STATUS" resultMap="monthlyAttendanceResultMapAvgStatus">
+    SELECT a.EMP_ID, a.AVG_STATUS
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.AVG_STATUS IS NOT NULL
+</select>
+
+<select id="getLatestDataByColumn_TOTAL_AEW" resultMap="monthlyAttendanceResultMapTotalAew">
+    SELECT a.EMP_ID, a.TTL_AEW
+    FROM NTP1_MONTHLY_ATND_MG a
+    INNER JOIN (
+        SELECT EMP_ID, MAX(MNT_ATND_NO) AS LatestMNT_ATND_NO
+        FROM NTP1_MONTHLY_ATND_MG
+        GROUP BY EMP_ID
+    ) b ON a.EMP_ID = b.EMP_ID AND a.MNT_ATND_NO = b.LatestMNT_ATND_NO
+    WHERE a.TTL_AEW IS NOT NULL
+</select>
+
+</sqlMap>

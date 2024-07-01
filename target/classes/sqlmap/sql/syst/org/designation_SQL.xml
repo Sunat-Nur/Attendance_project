@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+
+<sqlMap namespace="designation">
+
+	<insert id="createDesignation" parameterClass="syst.org.vo.DesignationVO">
+        INSERT INTO NTP1_ORG_DSGN_MG (
+            DEPT_NO,DSGN_NO, DSGN_NAME, USE_YN, SORT_NUMBER,SECURITY_LEVEL,
+            REG_EMP_ID, REG_DT, MOD_EMP_ID, MOD_DT
+        ) VALUES (
+            #deptNo#,(SELECT COALESCE(MAX(DSGN_NO), 0) + 1 FROM NTP1_ORG_DSGN_MG),#dsgnName#,#useYn#,#sortNumber#,#securityLevel#,
+             #regEmpId#, #regDt#, #modEmpId#, #modDt#
+        )
+    </insert>
+
+  	<resultMap id="designationResult" class="syst.org.vo.DesignationVO">
+        <result property="deptNo" column="DEPT_NO"/>
+        <result property="dsgnNo" column="DSGN_NO"/>
+        <result property="dsgnName" column="DSGN_NAME"/>
+        <result property="useYn" column="USE_YN"/>
+        <result property="sortNumber" column="SORT_NUMBER"/>
+        <result property="securityLevel" column="SECURITY_LEVEL"/>
+        <result property="regEmpId" column="REG_EMP_ID"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="modEmpId" column="MOD_EMP_ID"/>
+        <result property="modDt" column="MOD_DT"/>
+    </resultMap>
+
+   
+    <select id="getAllDesignation" resultMap="designationResult">
+        SELECT * FROM NTP1_ORG_DSGN_MG
+    </select>
+   
+    <select id="selectDesignationByDesignationNumber" parameterClass="java.lang.Long" resultMap="designationResult">
+        SELECT * FROM NTP1_ORG_DSGN_MG WHERE DSGN_NO = #value#
+    </select>
+    
+    <select id="getDesignationBydeptNo" parameterClass="java.lang.Long" resultMap="designationResult">
+        SELECT * FROM NTP1_ORG_DSGN_MG WHERE  DEPT_NO = #value#
+    </select>
+   
+	<select id="selectDesignationsByDeptNumber" parameterClass="java.lang.Long" resultMap="designationResult">
+		SELECT * FROM NTP1_ORG_DSGN_MG WHERE DEPT_NO = #value#
+	</select>
+ 
+   <select id="selectSecurityLevelByDsgnNumber" parameterClass="java.lang.Long" resultMap="designationResult">
+    	SELECT * FROM NTP1_ORG_DSGN_MG WHERE DSGN_NO = #value#
+   </select>
+   
+ 	<select id="getDesignationByDsgnNo" parameterClass="java.lang.Long" resultMap="designationResult">
+       	SELECT * FROM NTP1_ORG_DSGN_MG WHERE DSGN_NO = #value#
+    </select>
+
+    <update id="updateDesignation" parameterClass="syst.org.vo.DesignationVO">
+	    UPDATE NTP1_ORG_DSGN_MG
+	    SET
+	        DEPT_NO = #deptNo#,
+	        DSGN_NAME = #dsgnName#,
+	        USE_YN = #useYn#,
+	        SORT_NUMBER = #sortNumber#,
+	        SECURITY_LEVEL = #securityLevel#,
+	        REG_EMP_ID = #regEmpId#,
+	        REG_DT = #regDt#,
+	        MOD_EMP_ID = #modEmpId#,
+	        MOD_DT = #modDt#
+	    WHERE DSGN_NO = #dsgnNo#
+	</update>
+	
+</sqlMap>

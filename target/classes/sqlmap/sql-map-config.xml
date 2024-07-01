@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+<settings useStatementNamespaces="true" />
+
+<sqlMap resource="/sqlmap/sql/sqlmap_SQL.xml" /> <!-- 공통 -->
+
+<!-- <sqlMap resource="/sqlmap/sql/employee/attendanceAggregate_SQL.xml" /> 샘플
+
+<sqlMap resource="/sqlmap/sql/employee/attendance_SQL.xml" /> 샘플
+
+ <sqlMap resource="/sqlmap/sql/employee/annuallyAttendance_SQL.xml" />
+
+<sqlMap resource="/sqlmap/sql/employee/monthlyAttendance_SQL.xml" />
+
+<sqlMap resource="/sqlmap/sql/employee/quarterlyAttendance_SQL.xml" />
+
+<sqlMap resource="/sqlmap/sql/employee/semiAnuallyAttendance_SQL.xml" />
+
+<sqlMap resource="/sqlmap/sql/employee/weeklyAttendance_SQL.xml" />
+
+<sqlMap resource="/sqlmap/sql/employee/employee_SQL.xml" /> 샘플
+
+<sqlMap resource="/sqlmap/sql/employee/kyc_SQL.xml" /> 샘플
+
+<sqlMap resource="/sqlmap/sql/employee/leaveBoard_SQL.xml" /> 샘플
+
+<sqlMap resource="/sqlmap/sql/employee/leavePersonal_SQL.xml" /> 샘플
+
+<sqlMap resource="/sqlmap/sql/employee/employeeDeletedHistory_SQL.xml" /> 샘플
+
+<sqlMap resource="/sqlmap/sql/employee/employeeEditedHistoty_SQL.xml" /> 샘플 -->
+
+
+
+
+<sqlMap resource="/sqlmap/sql/syst/code/code_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/menu/menu_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/auth/authorityMenuMap_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/auth/authorityMG_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/auth/authorityUser_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/user/userMg_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/user/files_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/holiday/holiday_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/org/group_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/org/department_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/org/designation_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/hist/loginHist_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/hist/otherHist_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/syst/hist/downloadHist_SQL.xml" /> <!-- 샘플 -->
+
+
+
+<sqlMap resource="/sqlmap/sql/atnd/attendance/attendance_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/atnd/attendance/dailyAttendance_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/atnd/attendance/weeklyAttendance_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/atnd/attendance/monthlyAttendance_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/atnd/attendance/quarterlyAttendance_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/atnd/attendance/annuallyAttendance_SQL.xml" /> <!-- 샘플 -->
+
+<sqlMap resource="/sqlmap/sql/atnd/calendar/calendar_SQL.xml" /> <!-- 샘플 -->
+
+
+</sqlMapConfig>

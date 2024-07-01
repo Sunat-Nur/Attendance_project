@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="menu">
+   
+    <insert id="createMenu" parameterClass="syst.menu.vo.MenuVO">
+   		INSERT INTO NTP1_MENU_MG (MENU_NO, UPPER_MENU_NO, MENU_NAME, SORT_NUMBER, USE_YN, MENU_URL, REG_EMP_ID, REG_DT, MOD_EMP_ID, MOD_DT)
+   		VALUES (#menuNo#, #upperMenuNo#, #menuName#, #sortNumber#, #useYn#, #menuUrl#, #regEmpId#, #regDt#, #modEmpId#, #modDt#)
+	</insert>
+
+    <resultMap id="menuResult" class="syst.menu.vo.MenuVO">
+        <result property="menuNo" column="MENU_NO"/>
+        <result property="upperMenuNo" column="UPPER_MENU_NO"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="sortNumber" column="SORT_NUMBER"/>
+        <result property="useYn" column="USE_YN"/>
+        <result property="menuUrl" column="MENU_URL"/>
+        <result property="regEmpId" column="REG_EMP_ID"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="modEmpId" column="MOD_EMP_ID"/>
+        <result property="modDt" column="MOD_DT"/>
+    </resultMap>
+   
+	<select id="getMenuListForMenu" resultMap="menuResult">
+	    SELECT * 
+	    FROM   	NTP1_MENU_MG
+	    WHERE  	UPPER_MENU_NO = 0
+	    AND   	USE_YN = 'Y'
+	    ORDER BY SORT_NUMBER ASC
+	</select>
+    
+    <select id="getAllSubMenus" resultMap="menuResult">
+        SELECT *
+        FROM 	NTP1_MENU_MG
+        WHERE	UPPER_MENU_NO IS NOT NULL
+        AND  	UPPER_MENU_NO != 0
+        AND    	USE_YN = 'Y'
+        ORDER BY UPPER_MENU_NO, SORT_NUMBER ASC
+    </select>
+    
+	<select id="getMenuList" resultMap="menuResult">
+        SELECT * 
+        FROM	NTP1_MENU_MG
+    </select>
+    
+   	<select id="getMenuByMenuNo" parameterClass="java.lang.Long" resultMap="menuResult">
+    	SELECT * 
+    	FROM 	NTP1_MENU_MG 
+    	WHERE 	MENU_NO = #menuNo#
+	</select>
+	
+	<select id="getMenuListBasedOnAuthority" resultMap="menuResult" parameterClass="java.lang.String">
+	    SELECT DISTINCT m.* 
+	    FROM NTP1_MENU_MG m
+	    JOIN NTP1_AUTH_MENU_MAP_MG amm ON m.MENU_NO = amm.MENU_NO
+	    JOIN NTP1_AUTH_GRP_USER_MG agu ON amm.GROUP_NO = agu.GROUP_NO
+	    JOIN NTP1_AUTHORITY_MG authorityMG ON amm.GROUP_NO = authorityMG.GROUP_NO
+	    WHERE agu.EMP_ID = #empId#
+	    AND m.USE_YN = 'Y'             <!-- Added condition for MENU USE_YN -->
+	    AND authorityMG.USE_YN = 'Y'   <!-- Added condition for AUTHORITY GROUP USE_YN -->
+	    ORDER BY m.SORT_NUMBER ASC
+	</select>
+	
+	<select id="getMenuByUrl" parameterClass="java.lang.String" resultMap="menuResult">
+	    SELECT * 
+	    FROM   NTP1_MENU_MG 
+	    WHERE  MENU_URL = #value#
+	</select>
+	
+	<select id="getSubMenusByMenuNo" parameterClass="java.lang.Long" resultMap="menuResult">
+	    SELECT * 
+	    FROM    NTP1_MENU_MG
+	    WHERE   UPPER_MENU_NO = #menuNo#
+	    ORDER BY SORT_NUMBER ASC
+	</select>
+	
+	<select id="getAllmenuNo" resultClass="java.lang.Long">
+	    SELECT MENU_NO 
+	    FROM NTP1_MENU_MG
+	</select>
+	
+	<select id="getTopMenuList" parameterClass="java.lang.Long" resultMap="menuResult">
+	    SELECT * 
+	    FROM NTP1_MENU_MG
+	    WHERE UPPER_MENU_NO = 0
+	    AND MENU_NO != #menuNoToMove#
+	    ORDER BY SORT_NUMBER ASC
+	</select>
+	
+ 	<update id="updateMenu" parameterClass="syst.menu.vo.MenuVO">
+   	UPDATE NTP1_MENU_MG SET
+        UPPER_MENU_NO = #upperMenuNo#,
+        MENU_NAME = #menuName#,
+        SORT_NUMBER = #sortNumber#,
+        USE_YN = #useYn#,
+        MENU_URL = #menuUrl#,
+        REG_EMP_ID = #regEmpId#,
+        REG_DT = #regDt#,
+        MOD_EMP_ID = #modEmpId#,
+        MOD_DT = #modDt#
+ 	WHERE MENU_NO = #menuNo#
+    </update>
+    
+   	<update id="updateMenuUpperNo" parameterClass="map">
+	    UPDATE NTP1_MENU_MG
+	    SET UPPER_MENU_NO = #upperMenuNo#
+	    WHERE MENU_NO = #menuNo#
+	</update>
+    
+</sqlMap>

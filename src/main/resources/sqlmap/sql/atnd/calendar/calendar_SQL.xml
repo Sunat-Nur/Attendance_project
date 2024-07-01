@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="calendar">
+
+    <resultMap id="calendarResult" class="atnd.calendar.vo.CalendarVO">
+        <result property="title" column="TITLE"/>
+        <result property="regEmpId" column="REG_EMP_ID"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="startDt" column="START_DT"/>
+        <result property="endDt" column="END_DT"/>
+        <result property="details" column="DETAILS"/>
+        <result property="division" column="DIVISION"/>
+        <result property="year" column="YEAR"/>
+        <result property="month" column="MONTH"/>
+        <result property="eventNo" column="EVENT_NO"/>
+    </resultMap>
+
+    <resultMap id="holidayResult" class="syst.holiday.vo.HolidayVO">
+        <result property="holidayName" column="HOLIDAY_NAME"/>
+        <result property="holidayNo" column="HOLIDAY_NO"/>
+        <result property="holidayDc" column="HOLIDAY_DC"/>
+        <result property="holidayDate" column="HOLIDAY_DATE"/>
+        <result property="regDt" column="REG_DT"/>
+        <result property="modEmpId" column="MOD_EMP_ID"/>
+        <result property="modDt" column="MOD_DT"/>
+        <result property="regEmpId" column="REG_EMP_ID"/>
+    </resultMap>
+    
+    <insert id="insertCalendar" parameterClass="atnd.calendar.vo.CalendarVO">
+    	<!-- Generate eventNo by selecting the max value and adding 1 -->
+	    <selectKey resultClass="java.lang.Long" keyProperty="eventNo" type="pre">
+	        SELECT COALESCE(MAX(EVENT_NO), 0) + 1 AS eventNo FROM NTP1_CALENDAR
+	    </selectKey>
+    	INSERT INTO NTP1_CALENDAR (EVENT_NO, TITLE, REG_EMP_ID, REG_DT, START_DT, END_DT, DETAILS, DIVISION, YEAR, MONTH)
+    	VALUES (#eventNo#, #title#, #regEmpId#, #regDt#, #startDt#, #endDt#, #details#, #division#, #year#, #month#)
+	</insert>
+
+    <select id="getEventsByDivision" parameterClass="java.lang.String" resultMap="calendarResult">
+        SELECT * FROM NTP1_CALENDAR WHERE DIVISION = #value#
+    </select>
+
+	<select id="getEventsForCriteria" parameterClass="java.util.Map" resultMap="calendarResult">
+	   SELECT * FROM NTP1_CALENDAR
+	   WHERE EXTRACT(YEAR FROM START_DT) = #year#
+	   AND EXTRACT(MONTH FROM START_DT) = #month#
+	   AND DIVISION = #division#
+	</select>
+
+	<select id="getUpcomingEvents" parameterClass="java.util.Map" resultMap="calendarResult">
+	   SELECT * FROM NTP1_CALENDAR
+	   WHERE START_DT BETWEEN TO_DATE(#startDate#, 'YYYY-MM-DD') AND TO_DATE(#endDate#, 'YYYY-MM-DD')
+	</select>
+   
+  	<delete id="deleteEventByEventNo" parameterClass="java.lang.Long">
+        DELETE FROM NTP1_CALENDAR WHERE EVENT_NO = #value#
+    </delete>
+   
+    <update id="updateEventByeventNo" parameterClass="atnd.calendar.vo.CalendarVO">
+	    UPDATE NTP1_CALENDAR
+	    SET
+	        TITLE = #title#,
+	        DETAILS = #details#,
+	        DIVISION = #division#,
+	        START_DT = #startDt#,
+	        END_DT = #endDt#
+	    WHERE
+	        EVENT_NO = #eventNo#
+	</update>
+
+</sqlMap>

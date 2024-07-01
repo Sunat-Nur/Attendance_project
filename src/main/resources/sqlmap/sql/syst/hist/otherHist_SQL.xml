@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="otherHistory">
+
+    <insert id="saveOtherHistory" parameterClass="syst.hist.vo.OtherHistoryVO">
+        INSERT INTO NTP1_OTHER_HIST_MG (
+            HIST_SN, HIST_DATE, IP, EMP_ID, NAME, DEPT_NAME, MENU_NAME,
+            HISTORY_CFN, URL, PARAMETER
+        )
+        VALUES (
+            (SELECT COALESCE(MAX(HIST_SN), 0) + 1 FROM NTP1_OTHER_HIST_MG), #histDate#, #ip#, #empId#, #name#, #deptName#,
+            #menuName#, #historyCfn#, #url#, #parameter#
+        )
+   </insert>
+
+    <resultMap id="otherHistoryResult" class="syst.hist.vo.OtherHistoryVO">
+        <result property="histSn" column="HIST_SN"/>
+        <result property="histDate" column="HIST_DATE"/>
+        <result property="ip" column="IP"/>
+        <result property="empId" column="EMP_ID"/>
+        <result property="name" column="NAME"/>
+        <result property="deptName" column="DEPT_NAME"/>
+        <result property="menuName" column="MENU_NAME"/>
+        <result property="historyCfn" column="HISTORY_CFN"/>
+        <result property="url" column="URL"/>
+        <result property="parameter" column="PARAMETER"/>
+    </resultMap>
+
+    <select id="findAllOtherHistoryList" resultMap="otherHistoryResult">
+        SELECT * FROM NTP1_OTHER_HIST_MG
+    </select>
+
+</sqlMap>

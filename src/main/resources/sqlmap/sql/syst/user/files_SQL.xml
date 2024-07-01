@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="files">
+
+	<resultMap id="filesResult" class="syst.user.vo.FilesVO">
+	   <result property="no" column="NO"/>
+	   <result property="user.empId" column="EMP_ID"/>
+	   <result property="fileName" column="FILE_NAME"/>
+	   <result property="fileData" column="FILE_DATA"/>
+	   <result property="fileSize" column="FILE_SIZE"/>
+	   <result property="fileType" column="FILE_TYPE"/>
+	   <result property="fileCategory" column="FILE_CATEGORY"/>
+	</resultMap>
+
+	<insert id="saveFile" parameterClass="syst.user.vo.FilesVO">
+        INSERT INTO NTP1_FILES (NO, EMP_ID, FILE_NAME, FILE_DATA, FILE_SIZE, FILE_TYPE, FILE_CATEGORY)
+        VALUES ((SELECT COALESCE(MAX(NO), 0) + 1 FROM NTP1_FILES), #user.empId#, #fileName#, #fileData#, #fileSize#, #fileType#, #fileCategory#)
+    </insert>
+    
+    <select id="getFilesByUserId" parameterClass="java.lang.String" resultMap="filesResult">
+	    SELECT *
+	    FROM NTP1_FILES
+	    WHERE EMP_ID = #value#
+	</select>
+	
+	<select id="getFileByNo" parameterClass="java.lang.Long" resultMap="filesResult">
+	    SELECT *
+	    FROM NTP1_FILES
+	    WHERE NO = #value#
+    </select>
+    
+    <delete id="deleteFile" parameterClass="java.lang.Long">
+		DELETE FROM NTP1_FILES WHERE NO = #value#
+	</delete>
+
+</sqlMap>

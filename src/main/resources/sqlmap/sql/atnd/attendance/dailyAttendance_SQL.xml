@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="dailyAttendance">
+
+	<resultMap id="attendanceResultMap" class="atnd.attendance.vo.AttendanceDailyVO">
+	    <result property="empId" column="EMP_ID"/>
+	    <result property="atndNo" column="ATND_NO"/>
+	    <result property="name" column="NAME"/>
+	    <result property="group" column="GROUP"/>
+	    <result property="department" column="DEPARTMENT"/>
+	    <result property="designation" column="DESIGNATION"/>
+	    <result property="yearOfWork" column="YEAR_OF_WORK"/>
+	    <result property="career" column="CAREER"/>
+	    <result property="timeSetting" column="TIME_SETTING"/>
+	    <result property="gpsInformation" column="GPS_INFORMATION"/>
+	    <result property="startTime" column="START_TIME"/>
+	    <result property="endTime" column="END_TIME"/>
+	    <result property="lateness" column="LATENESS"/>
+	    <result property="late" column="LATE"/>
+	    <result property="overTime" column="OVER_TIME"/>
+	    <result property="workType" column="WORK_TYPE"/>
+	    <result property="workHour" column="WORK_HOUR"/>
+	    <result property="outsideWork" column="OUTSIDE_WORK"/>
+	    <result property="businessTrip" column="BUSINESS_TRIP"/>
+	    <result property="training" column="TRAINING"/>
+	    <result property="accessType" column="ACCESS_TYPE"/>
+	    <result property="ipAddress" column="IP_ADDRESS"/>
+	    <result property="aew" column="AEW"/>
+	    <result property="status" column="STATUS"/>
+	</resultMap>
+	
+	
+	
+	<select id="fetchDailyAttendanceData" resultMap="attendanceResultMap">
+<![CDATA[
+    SELECT 
+        EMP_ID,
+        NAME,
+        "GROUP",
+        DEPARTMENT,
+        DESIGNATION,
+        YEAR_OF_WORK,
+        CAREER,
+        TIME_SETTING,
+        GPS_INFORMATION,
+        START_TIME,
+        END_TIME,
+        LATE,
+        LATENESS,
+        OVER_TIME,
+        WORK_TYPE,
+        WORK_HOUR,
+        OUTSIDE_WORK,
+        BUSINESS_TRIP,
+        TRAINING,
+        ACCESS_TYPE,
+        IP_ADDRESS,
+        AEW,
+        STATUS,
+        ATND_NO
+    FROM 
+        NTP1_DAILY_ATND_MG 
+    WHERE 
+        START_TIME BETWEEN TRUNC(SYSDATE) - INTERVAL '7' DAY AND TRUNC(SYSDATE) - INTERVAL '1' SECOND
+]]>
+</select>
+	
+	
+	
+	
+	<select id="fetchDailyAttendanceDataForMonthAggregate" resultMap="attendanceResultMap">
+<![CDATA[
+    SELECT 
+        EMP_ID,
+        NAME,
+        "GROUP",
+        DEPARTMENT,
+        DESIGNATION,
+        YEAR_OF_WORK,
+        CAREER,
+        TIME_SETTING,
+        GPS_INFORMATION,
+        START_TIME,
+        END_TIME,
+        LATE,
+        LATENESS,
+        OVER_TIME,
+        WORK_TYPE,
+        WORK_HOUR,
+        OUTSIDE_WORK,
+        BUSINESS_TRIP,
+        TRAINING,
+        ACCESS_TYPE,
+        IP_ADDRESS,
+        AEW,
+        STATUS,
+        ATND_NO
+    FROM 
+        NTP1_DAILY_ATND_MG 
+    WHERE 
+        START_TIME >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM')
+        AND START_TIME < TRUNC(SYSDATE, 'MM')
+]]>
+</select>
+	
+	
+	
+	<select id="fetchDailyAttendanceDataForQuarterlyAggregate" resultMap="attendanceResultMap">
+<![CDATA[
+    SELECT 
+        EMP_ID,
+        NAME,
+        "GROUP",
+        DEPARTMENT,
+        DESIGNATION,
+        YEAR_OF_WORK,
+        CAREER,
+        TIME_SETTING,
+        GPS_INFORMATION,
+        START_TIME,
+        END_TIME,
+        LATE,
+        LATENESS,
+        OVER_TIME,
+        WORK_TYPE,
+        WORK_HOUR,
+        OUTSIDE_WORK,
+        BUSINESS_TRIP,
+        TRAINING,
+        ACCESS_TYPE,
+        IP_ADDRESS,
+        AEW,
+        STATUS,
+        ATND_NO
+    FROM 
+        NTP1_DAILY_ATND_MG 
+    WHERE 
+        START_TIME >= TRUNC(ADD_MONTHS(SYSDATE, -3), 'MM')
+        AND START_TIME < TRUNC(SYSDATE, 'MM')
+]]>
+</select>
+
+
+<select id="fetchDailyAttendanceDataForYearlyAggregate" resultMap="attendanceResultMap">
+<![CDATA[
+    SELECT 
+        EMP_ID,
+        NAME,
+        "GROUP",
+        DEPARTMENT,
+        DESIGNATION,
+        YEAR_OF_WORK,
+        CAREER,
+        TIME_SETTING,
+        GPS_INFORMATION,
+        START_TIME,
+        END_TIME,
+        LATE,
+        LATENESS,
+        OVER_TIME,
+        WORK_TYPE,
+        WORK_HOUR,
+        OUTSIDE_WORK,
+        BUSINESS_TRIP,
+        TRAINING,
+        ACCESS_TYPE,
+        IP_ADDRESS,
+        AEW,
+        STATUS,
+        ATND_NO
+    FROM 
+        NTP1_DAILY_ATND_MG 
+    WHERE 
+        START_TIME >= ADD_MONTHS(TRUNC(SYSDATE), -12)
+        AND START_TIME < TRUNC(SYSDATE)
+]]>
+</select>
+	
+	
+	<insert id="insertDailyAverageAttendance" parameterClass="atnd.attendance.vo.AttendanceDailyVO">
+	    INSERT INTO NTP1_DAILY_ATND_MG (
+	        ATND_NO, EMP_ID, NAME, "GROUP", DEPARTMENT, DESIGNATION, YEAR_OF_WORK, CAREER,
+	        TIME_SETTING, GPS_INFORMATION, START_TIME, END_TIME, WORK_TYPE,
+	        ACCESS_TYPE, LATE, LATENESS, IP_ADDRESS, OUTSIDE_WORK, BUSINESS_TRIP,
+	        TRAINING, OVER_TIME, STATUS, WORK_HOUR, AEW
+	    ) VALUES (
+	        (SELECT COALESCE(MAX(ATND_NO), 0) + 1 FROM NTP1_DAILY_ATND_MG), #empId#, #name#, #group#, #department#, #designation#, #yearOfWork#, #career#,
+	        #timeSetting#, #gpsInformation#, #startTime#, #endTime#, #workType#,
+	        #accessType#, #late#, #lateness#, #ipAddress#, #outsideWork#, #businessTrip#,
+	        #training#, #overTime#, #status#, #workHour#, #aew#
+	    )
+	</insert>
+
+	<insert id="insertAttendance" parameterClass="atnd.attendance.vo.AttendanceDailyVO">
+        INSERT INTO NTP1_ATND_MG (
+            NO, EMP_ID, TIME_SETTING, GPS_INFORMATION, START_TIME, END_TIME,
+            LATENESS, LATE, OVER_TIME, WORK_TYPE, WORK_HOUR, OUTSIDE_WORK, BUSINESS_TRIP,
+            TRAINING, ACCESS_TYPE, IP_ADDRESS, AEW
+        ) VALUES (
+            (SELECT COALESCE(MAX(NO), 0) + 1 FROM NTP1_ATND_MG), #empId#, #timeSetting#, #gpsInformation#,
+            #startTime#, #endTime#, #lateness#, #late#, #overTime#, #workType#,
+            #workHour#, #outsideWork#, #businessTrip#, #training#, #accessType#, #ipAddress#, #aew#
+        )
+    </insert>  
+   
+   <select id="getAllAttendance" resultMap="attendanceResultMap" parameterClass="string">
+        SELECT * FROM NTP1_DAILY_ATND_MG WHERE EMP_ID = #value#
+    </select>
+   
+	<select id="selectAllLatestAttendances" resultMap="attendanceResultMap">
+	    SELECT a.*
+	    FROM NTP1_DAILY_ATND_MG a
+	    INNER JOIN (
+	        SELECT EMP_ID, MAX(START_TIME) as MAX_START_TIME
+	        FROM NTP1_DAILY_ATND_MG
+	        GROUP BY EMP_ID
+	    ) latest ON a.EMP_ID = latest.EMP_ID AND a.START_TIME = latest.MAX_START_TIME
+	    ORDER BY a.EMP_ID, a.START_TIME DESC
+	</select>
+	
+	<select id="fetchDailyDataForOvertime" parameterClass="java.util.Map" resultMap="attendanceResultMap">
+	   	SELECT *
+		FROM NTP1_DAILY_ATND_MG
+		WHERE EMP_ID = #empId#
+		AND TRUNC(start_time) = TRUNC(#startTime#)
+	</select>
+	
+	<update id="updateOverTimeForDailyData" parameterClass="atnd.attendance.vo.AttendanceDailyVO">
+		 UPDATE NTP1_DAILY_ATND_MG
+		 SET OVER_TIME = #overTime#,
+		      STATUS = #status#
+		  WHERE EMP_ID = #empId#
+		  AND ATND_NO = #atndNo#
+	</update>
+	
+	<update id="updatePersonalAttendanceData" parameterClass="atnd.attendance.vo.AttendanceDailyVO">
+		 UPDATE NTP1_DAILY_ATND_MG
+		 SET START_TIME = #startTime#,
+		     END_TIME = #endTime#,
+		     LATE = #late#,
+		     LATENESS = #lateness#,
+		     WORK_HOUR = #workHour#,
+		       STATUS = #status#
+		  WHERE ATND_NO = #atndNo#
+	</update>
+
+	<update id="updateAttendanceList" parameterClass="atnd.attendance.vo.AttendanceDailyVO">
+	   UPDATE NTP1_DAILY_ATND_MG
+	   SET
+	       TIME_SETTING = #timeSetting#,
+	       GPS_INFORMATION = #gpsInformation#,
+	       START_TIME = #startTime#,
+	       END_TIME = #endTime#,
+	       LATENESS = #lateness#,
+	       LATE = #late#,
+	       OVER_TIME = #overTime#,
+	       WORK_TYPE = #workType#,
+	       WORK_HOUR = #workHour#,
+	       OUTSIDE_WORK = #outsideWork#,
+	       BUSINESS_TRIP = #businessTrip#,
+	       TRAINING = #training#,
+	       ACCESS_TYPE = #accessType#,
+	       STATUS = #status#,
+	       AEW = #aew#
+	   WHERE
+	      ATND_NO  = #atndNo#
+	</update>
+
+	<delete id="deletePersonalAttendance" parameterClass="java.lang.Long">
+	    DELETE FROM NTP1_ATND_MG WHERE NO = #no#
+	</delete>
+
+</sqlMap>
