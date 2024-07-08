@@ -1,10 +1,8 @@
 
 #!/bin/bash
 
-#PRODUCTION 
+#PRODUCTION
 
-git resit —hard
+git resit --hard
 git pull origin master
 npm i
-
-
