@@ -1,7 +1,10 @@
 #!/bin/bash
 
-#PRODUCTION
+# ATTENDANCE_PROJECT
 
-git resit --hard
+# Reset any changes and pull the latest code
+git reset --hard
 git pull origin master
-npm i
+
+# Build the project using Maven
+mvn clean install
