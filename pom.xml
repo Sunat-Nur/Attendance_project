@@ -100,17 +100,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>8.0.192</version>
-		</dependency>
-
-		<!--<dependency>
-			<groupId>org.openjfx</groupId>
-			<artifactId>javafx-controls</artifactId>
 			<version>11</version>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>javafx</artifactId>
